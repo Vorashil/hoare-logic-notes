@@ -1,0 +1,85 @@
+% Section 8: Judgements
+\section{Judgements}
+
+\begin{frame}{Judgements}
+    \begin{block}{Three Kinds of Things That Could Be True or False}
+        \begin{itemize}
+            \item \textbf{Statements of mathematics}, e.g., $(X + 1)^2 = X^2 + 2 \times X + 1$
+            \item \textbf{Partial correctness specifications} $\{P\} C \{Q\}$
+            \item \textbf{Total correctness specifications} $[P] C [Q]$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{What Are Judgements?}
+        These three kinds of things are examples of \emph{judgements}
+        \begin{itemize}
+            \item A logical system gives rules for proving judgements
+            \item Floyd-Hoare logic provides rules for proving partial correctness specifications
+            \item The laws of arithmetic provide ways of proving statements about integers
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Proving Judgements}
+    \begin{block}{The Turnstile Notation}
+        $\vdash S$ means statement $S$ can be proved
+        \begin{itemize}
+            \item How to prove predicate calculus statements assumed known
+            \item This course covers axioms and rules for proving \emph{program correctness statements}
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Note}
+        We will introduce the specific axioms and inference rules of Floyd-Hoare logic in detail in the following sections
+    \end{alertblock}
+    
+    \begin{example}[Different Types of Provable Judgements]
+        \begin{itemize}
+            \item $\vdash (x + y)^2 = x^2 + 2xy + y^2$ (mathematical)
+            \item $\vdash \{x = 5\} y := x + 1 \{y = 6\}$ (program correctness)
+            \item $\vdash [x \geq 0] y := \sqrt{x} [y^2 = x]$ (total correctness)
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Why Judgements Matter}
+    \begin{block}{Formal vs Informal Reasoning}
+        \begin{itemize}
+            \item \textbf{Informal}: ``Obviously, if x=5 then after y:=x+1, y will be 6''
+            \item \textbf{Formal}: Use axioms and rules to derive $\vdash \{x = 5\} y := x + 1 \{y = 6\}$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Benefits of Formal Judgements}
+        \begin{enumerate}
+            \item \textbf{Precision}: No ambiguity about what needs to be proved
+            \item \textbf{Mechanization}: Can be checked by computers
+            \item \textbf{Composability}: Complex proofs built from simpler ones
+            \item \textbf{Confidence}: Mathematical certainty about correctness
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Types of Logical Systems}
+    \begin{block}{Different Logical Systems for Different Judgements}
+        \begin{tabular}{|l|l|}
+            \hline
+            \textbf{Judgement Type} & \textbf{Logical System} \\
+            \hline
+            Mathematical statements & Predicate logic, arithmetic \\
+            Partial correctness & Floyd-Hoare logic \\
+            Total correctness & Extended Hoare logic \\
+            Type checking & Type systems \\
+            \hline
+        \end{tabular}
+    \end{block}
+    
+    \begin{block}{Focus of This Course}
+        This course focuses on Floyd-Hoare logic for proving partial correctness specifications
+        \begin{itemize}
+            \item We'll learn the axioms (basic facts)
+            \item We'll learn the inference rules (ways to combine facts)
+            \item We'll practice constructing formal proofs
+        \end{itemize}
+    \end{block}
+\end{frame}
