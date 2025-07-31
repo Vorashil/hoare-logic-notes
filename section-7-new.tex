@@ -1,0 +1,93 @@
+% Section 7: Floyd-Hoare Logic
+\section{Floyd-Hoare Logic}
+
+\begin{frame}{Floyd-Hoare Logic}
+    \begin{block}{The Need for Formal Proofs}
+        To construct formal proofs of partial correctness specifications, \emph{axioms} and \emph{rules of inference} are needed
+    \end{block}
+    
+    \begin{block}{What Floyd-Hoare Logic Provides}
+        This is what Floyd-Hoare logic provides:
+        \begin{itemize}
+            \item The formulation of the deductive system is due to Hoare
+            \item Some of the underlying ideas originated with Floyd
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Structure of Proofs in Floyd-Hoare Logic}
+    \begin{block}{Proof Definition}
+        A proof in Floyd-Hoare logic is a sequence of lines, each of which is either:
+        \begin{itemize}
+            \item An \textbf{axiom} of the logic, or
+            \item Follows from earlier lines by a \textbf{rule of inference} of the logic
+        \end{itemize}
+        
+        Note: Proofs can also be trees, if you prefer
+    \end{block}
+    
+    \begin{block}{Purpose of Formal Proofs}
+        A formal proof makes explicit what axioms and rules of inference are used to arrive at a conclusion
+    \end{block}
+\end{frame}
+
+\begin{frame}{Components of Floyd-Hoare Logic}
+    \begin{block}{Axioms}
+        \textbf{Axioms} are basic facts about specific programming constructs that require no proof:
+        \begin{itemize}
+            \item Assignment axiom
+            \item Skip axiom (for the empty command)
+            \item Other basic command axioms
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Rules of Inference}
+        \textbf{Rules of inference} allow us to derive new facts from existing ones:
+        \begin{itemize}
+            \item Sequence rule (composition)
+            \item Conditional rule (if-then-else)
+            \item While loop rule
+            \item Consequence rule
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Historical Context}
+    \begin{block}{Robert W. Floyd (1936-2001)}
+        \begin{itemize}
+            \item Introduced flowchart-based verification methods (1967)
+            \item Pioneered the use of loop invariants
+            \item Developed techniques for proving program termination
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{C.A.R. Hoare (1934-)}
+        \begin{itemize}
+            \item Formalized Floyd's ideas into a logical system (1969)
+            \item Introduced the triple notation $\{P\} C \{Q\}$
+            \item Created the axiomatic semantics approach
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Note}
+        The system is called ``Floyd-Hoare Logic'' to honor both contributors
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Example: What a Proof Looks Like}
+    \begin{example}[Simple Proof Structure]
+        To prove $\hoare{x = 5}{y := x + 1; z := y}{z = 6}$:
+        
+        \begin{enumerate}
+            \item $\hoare{x = 5}{y := x + 1}{y = 6}$ \hfill (Assignment axiom)
+            \item $\hoare{y = 6}{z := y}{z = 6}$ \hfill (Assignment axiom)
+            \item $\hoare{x = 5}{y := x + 1; z := y}{z = 6}$ \hfill (Sequence rule on 1,2)
+        \end{enumerate}
+        
+        Each line is justified by an axiom or rule!
+    \end{example}
+    
+    \begin{block}{Key Insight}
+        Floyd-Hoare Logic provides a \emph{systematic} way to prove program correctness, not just intuitive arguments
+    \end{block}
+\end{frame}
