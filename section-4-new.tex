@@ -1,0 +1,83 @@
+% Section 4: Hoare Logic and Verification
+\section{Hoare Logic and Verification}
+
+\begin{frame}{Hoare Logic and Verification Conditions}
+    \begin{block}{What is Hoare Logic?}
+        Hoare Logic is a \textbf{deductive proof system} for Hoare triples $\hoare{P}{C}{Q}$
+        \begin{itemize}
+            \item Provides axioms and inference rules for proving program correctness
+            \item Forms the theoretical foundation for program verification
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Direct Verification with Hoare Logic}
+        \textbf{Advantages:}
+        \begin{itemize}
+            \item Original proposal by Hoare
+            \item Provides complete formal proofs
+        \end{itemize}
+        
+        \textbf{Disadvantages:}
+        \begin{itemize}
+            \item Tedious and error-prone for humans
+            \item Impractical for large programs
+            \item Requires detailed manual proof construction
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Verification Conditions}
+    \begin{block}{Definition: What is a Verification Condition?}
+        A \textbf{verification condition} is a mathematical formula (without program constructs) whose truth implies the correctness of a program.
+        \begin{itemize}
+            \item Generated from Hoare triples by analyzing the program structure
+            \item Expressed purely in terms of logic and mathematics
+            \item No references to program execution or state changes
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Verification Conditions -2}
+
+        \begin{block}{Modern Approach: Verification Conditions}
+        Can `compile' proving $\hoare{P}{C}{Q}$ to \textbf{verification conditions}
+        \begin{itemize}
+            \item More natural for automated reasoning
+            \item Basis for computer-assisted verification
+            \item Separates program logic from mathematical reasoning
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Verification Conditions -3}
+    \begin{block}{Key Property}
+        Proof of verification conditions is \textbf{equivalent} to proof with Hoare Logic
+        \begin{itemize}
+            \item Hoare Logic can be used to \emph{explain} verification conditions
+            \item Both approaches prove the same correctness properties
+            \item Verification conditions are more amenable to automation
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Verification Condition Example}
+    \begin{example}[Simple Verification Condition]
+        To prove $\hoare{x > 0}{y := x + 1}{y > 1}$:
+        
+        \textbf{Step 1:} Analyze what the program does
+        \begin{itemize}
+            \item The assignment $y := x + 1$ sets $y$ to the value of $x + 1$
+        \end{itemize}
+        
+        \textbf{Step 2:} Generate the verification condition
+        \begin{itemize}
+            \item We need: if $x > 0$ initially, then $y > 1$ after assignment
+            \item Since $y$ will equal $x + 1$, we need: $x > 0 \Rightarrow (x + 1) > 1$
+        \end{itemize}
+        
+        \textbf{Step 3:} The verification condition is:
+        \[x > 0 \Rightarrow (x + 1) > 1\]
+        
+        This is a pure mathematical statement that can be proved using algebra, without any reference to program execution!
+    \end{example}
+\end{frame}

@@ -1,0 +1,12 @@
+\frametitle{Example Programs - 2}
+
+
+    \begin{block}{Maximum of two numbers `x` and `y`}
+        This program uses a conditional statement to find the maximum of two numbers, `x` and `y`, and stores the result in `max`.
+        \begin{lstlisting}[language=pseudocode, numbers=none]
+if x <= y then
+    max := y
+else
+    max := x
+        \end{lstlisting}
+    \end{block}

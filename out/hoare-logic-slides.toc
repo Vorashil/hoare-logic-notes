@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{A Little Programming Language}{3}{0}{1}
+\beamer@sectionintoc {2}{Program Specifications}{6}{0}{2}
+\beamer@sectionintoc {3}{Hoare's Notation}{8}{0}{3}
+\beamer@sectionintoc {4}{Hoare Logic and Verification}{18}{0}{4}
