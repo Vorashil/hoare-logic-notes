@@ -1,0 +1,97 @@
+% Section 5: Partial and Total Correctness
+\section{Partial and Total Correctness}
+
+\begin{frame}{Partial Correctness Specification}
+    \begin{block}{Definition}
+        An expression $\hoare{P}{C}{Q}$ is called a \textbf{partial correctness specification}
+        \begin{itemize}
+            \item $P$ is called its \textbf{precondition}
+            \item $Q$ its \textbf{postcondition}
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{When is $\hoare{P}{C}{Q}$ true?}
+        $\hoare{P}{C}{Q}$ is true if:
+        \begin{itemize}
+            \item whenever $C$ is executed in a state satisfying $P$
+            \item and \emph{if} the execution of $C$ terminates
+            \item then the state in which $C$'s execution terminates satisfies $Q$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Why ``Partial'' Correctness?}
+    \begin{block}{The Key Point}
+        These specifications are `partial' because for $\hoare{P}{C}{Q}$ to be true it is \textbf{not} necessary for the execution of $C$ to terminate when started in a state satisfying $P$
+    \end{block}
+    
+    \begin{block}{What is Required}
+        It is only required that \emph{if} the execution terminates, \emph{then} $Q$ holds
+    \end{block}
+    
+    \begin{example}[Infinite Loop]
+        $\hoare{X = 1}{\text{WHILE T DO } X := X}{Y = 2}$ -- \colorbox{yellow}{this specification is true!}
+        
+        \textbf{Why?} The loop never terminates, so we never need to check if $Y = 2$. The specification only makes a claim about what happens \emph{if} the program terminates.
+    \end{example}
+\end{frame}
+
+\begin{frame}{Total Correctness Specification}
+    \begin{block}{Definition}
+        A stronger kind of specification is a \textbf{total correctness specification}
+        \begin{itemize}
+            \item There is no standard notation for such specifications
+            \item We shall use $[P]\ C\ [Q]$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{When is $[P]\ C\ [Q]$ true?}
+        A total correctness specification $[P]\ C\ [Q]$ is true if and only if:
+        \begin{itemize}
+            \item whenever $C$ is executed in a state satisfying $P$ the \colorbox{yellow}{execution of $C$ terminates}
+            \item after $C$ terminates $Q$ holds
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Total Correctness Example}
+    \begin{example}[False Total Correctness]
+        $[X = 1]\ Y := X;\ \text{WHILE T DO } X := X\ [Y = 1]$
+        
+        This says that:
+        \begin{itemize}
+            \item the execution of $Y := X;\ \text{WHILE T DO } X := X$ terminates when started in a state satisfying $X = 1$
+            \item after which $Y = 1$ will hold
+        \end{itemize}
+        
+        \textbf{This is clearly false} because the while loop never terminates!
+    \end{example}
+    
+    \begin{alertblock}{Key Difference}
+        \begin{itemize}
+            \item Partial correctness: $\hoare{P}{C}{Q}$ -- ``If it terminates, then...''
+            \item Total correctness: $[P]\ C\ [Q]$ -- ``It terminates and then...''
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Relationship Between Partial and Total Correctness}
+    \begin{block}{Mathematical Relationship}
+        Total correctness = Partial correctness + Termination
+        
+        \[[P]\ C\ [Q] \equiv \hoare{P}{C}{Q} \wedge \text{``$C$ terminates when started in a state satisfying $P$''}\]
+    \end{block}
+    
+    \begin{block}{Practical Implications}
+        \begin{itemize}
+            \item Proving partial correctness is often easier
+            \item Proving termination requires additional techniques
+            \begin{itemize}
+                \item \textbf{Variant functions}: expressions that decrease with each loop iteration and are bounded below
+                \item Also called \emph{ranking functions} or \emph{termination measures}
+            \end{itemize}
+            \item Many verification tools focus on partial correctness first
+            \item Total correctness is needed for critical systems
+        \end{itemize}
+    \end{block}
+\end{frame}

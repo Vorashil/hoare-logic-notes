@@ -1,0 +1,94 @@
+% Section 6: Auxiliary Variables
+\section{Auxiliary Variables}
+
+\begin{frame}{Auxiliary Variables}
+    \begin{example}[Variable Swap]
+        $\hoare{X=x \wedge Y=y}{R:=X;\ X:=Y;\ Y:=R}{X=y \wedge Y=x}$
+        
+        This says that \emph{if} the execution of
+        \begin{center}
+            \texttt{R:=X; X:=Y; Y:=R}
+        \end{center}
+        terminates (which it does)
+        
+        \emph{then} the values of X and Y are exchanged
+    \end{example}
+    
+    \begin{block}{Key Observation}
+        The variables $x$ and $y$, which don't occur in the command and are used to name the initial values of program variables $X$ and $Y$
+    \end{block}
+\end{frame}
+
+\begin{frame}{What are Auxiliary Variables?}
+    \begin{block}{Definition}
+        Variables that appear in specifications but not in the program code are called:
+        \begin{itemize}
+            \item \textbf{Auxiliary variables}
+            \item \textbf{Ghost variables}
+            \item \textbf{Specification variables}
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Purpose}
+        Auxiliary variables allow us to:
+        \begin{itemize}
+            \item Refer to initial values of program variables in postconditions
+            \item Express relationships between initial and final states
+            \item Write more expressive specifications
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Naming Convention}
+    \begin{block}{Informal Convention}
+        To distinguish between program variables and auxiliary variables:
+        \begin{itemize}
+            \item \textbf{Program variables} are UPPER CASE (e.g., X, Y, Z)
+            \item \textbf{Auxiliary variables} are lower case (e.g., x, y, z)
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[More Examples]
+        \begin{itemize}
+            \item $\hoare{X=x}{X:=X+1}{X=x+1}$ -- $x$ remembers initial value
+            \item $\hoare{X=x \wedge Y=y}{X:=X+Y}{X=x+y \wedge Y=y}$
+            \item $\hoare{A[i]=a}{A[i]:=0}{A[i]=0 \wedge \text{``old } A[i] = a\text{''}}$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Why Auxiliary Variables Matter}
+    \begin{block}{Without Auxiliary Variables}
+        Consider trying to specify variable swap without auxiliary variables:
+        \begin{itemize}
+            \item $\hoare{?}{R:=X;\ X:=Y;\ Y:=R}{?}$
+            \item How do we say ``X gets Y's initial value''?
+            \item We can't refer to initial values!
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{With Auxiliary Variables}
+        We can express complex relationships:
+        \begin{itemize}
+            \item Maximum: $\hoare{X=x \wedge Y=y}{...}{M = \max(x,y)}$
+            \item Sorting: $\hoare{A=a}{...}{\text{``A is a sorted permutation of a''}}$
+            \item Any computation relating initial and final states
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Important Notes about Auxiliary Variables}
+    \begin{alertblock}{Key Properties}
+        \begin{enumerate}
+            \item Auxiliary variables are \textbf{immutable} -- they never change value during program execution
+            \item They exist only in specifications, not in the actual program
+            \item They are universally quantified (implicitly)
+        \end{enumerate}
+    \end{alertblock}
+    
+    \begin{block}{Formal Interpretation}
+        The specification $\hoare{X=x}{C}{Q(x)}$ actually means:
+        \[\forall x.\ \hoare{X=x}{C}{Q(x)}\]
+        ``For all values $x$, if $X$ starts with value $x$, then after $C$, property $Q(x)$ holds''
+    \end{block}
+\end{frame}
