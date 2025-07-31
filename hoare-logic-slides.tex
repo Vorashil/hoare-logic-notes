@@ -1,0 +1,252 @@
+\documentclass[11pt]{beamer}
+
+% Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{stmaryrd}
+\usepackage{syntax}
+\usepackage{bussproofs}
+\usepackage{hyperref}
+\usetikzlibrary{positioning, arrows.meta}
+
+
+% Hoare Logic Commands
+\renewcommand{\hoare}[3]{\{#1\}\; #2\; \{#3\}}
+\newcommand{\assert}[1]{\{#1\}}
+\newcommand{\pre}[1]{\{#1\}}
+\newcommand{\post}[1]{\{#1\}}
+\newcommand{\inv}[1]{\{#1\}}
+\newcommand{\wlp}{\mathit{wlp}}
+\renewcommand{\wp}{\mathit{wp}} % Changed from \newcommand
+\renewcommand{\sp}{\mathit{sp}} % Changed from \newcommand
+\renewcommand{\skip}{\texttt{skip}} % Changed from \newcommand
+\newcommand{\assign}[2]{#1 := #2}
+\newcommand{\seq}[2]{#1;\, #2}
+\newcommand{\ifte}[3]{\texttt{if } #1 \texttt{ then } #2 \texttt{ else } #3}
+\newcommand{\while}[2]{\texttt{while } #1 \texttt{ do } #2}
+\renewcommand{\implies}{\Rightarrow} % Changed from \newcommand
+\newcommand{\subst}[3]{#1[#2/#3]}
+\newcommand{\bnfdef}{\mathrel{::=}}
+\newcommand{\bnfor}{\;\mid\;}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    framesep=5pt,
+    breaklines=true,
+    tabsize=2,
+    captionpos=b,
+    morekeywords={assert, assume, invariant, requires, ensures, modifies},
+    escapeinside={(*}{*)},
+}
+
+% Define languages
+\lstdefinelanguage{pseudocode}{
+    keywords={if, then, else, while, do, for, to, skip, assert, assume, invariant},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+}
+
+% Title
+\title{Hoare Logic}
+\subtitle{Program Verification}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+\input{section-1}
+\input{section-1.5}
+\input{section-2}
+
+\section{Boilerplate}
+\begin{frame}{Hoare Triples}
+    \begin{definition}[Hoare Triple]
+        A \emph{Hoare triple} $\hoare{P}{S}{Q}$ consists of:
+        \begin{itemize}
+            \item Precondition $P$
+            \item Program $S$
+            \item Postcondition $Q$
+        \end{itemize}
+    \end{definition}
+    
+    \begin{block}{Meaning}
+        If $P$ holds before executing $S$, and $S$ terminates, then $Q$ holds after execution.
+    \end{block}
+    
+    \begin{example}
+        $\hoare{x = 5}{\assign{y}{x + 1}}{y = 6}$
+    \end{example}
+\end{frame}
+
+\begin{frame}[fragile]{Assignment Rule}
+    \begin{block}{Assignment Axiom}
+        \[
+        \frac{}{\hoare{\subst{Q}{e}{x}}{\assign{x}{e}}{Q}}
+        \]
+    \end{block}
+    
+    \begin{example}
+        To prove $\hoare{y = 5}{\assign{x}{y + 1}}{x = 6}$:
+        \begin{itemize}
+            \item $Q = (x = 6)$
+            \item $e = y + 1$
+            \item $\subst{Q}{e}{x} = (y + 1 = 6) \equiv (y = 5)$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}[fragile]{Code Example}
+    \begin{lstlisting}[language=pseudocode]
+// (*$\pre{x \geq 0}$*)
+y := 0;
+z := 0;
+while (y < x) do
+    // (*$\inv{z = y \wedge y \leq x}$*)
+    z := z + 1;
+    y := y + 1;
+// (*$\post{z = x}$*)
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Inference Rules}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{block}{Sequence Rule}
+            \[
+            \frac{\hoare{P}{S_1}{R} \quad \hoare{R}{S_2}{Q}}
+                 {\hoare{P}{\seq{S_1}{S_2}}{Q}}
+            \]
+        \end{block}
+        
+        \column{0.5\textwidth}
+        \begin{block}{Consequence Rule}
+            \[
+            \frac{P' \implies P \quad \hoare{P}{S}{Q} \quad Q \implies Q'}
+                 {\hoare{P'}{S}{Q'}}
+            \]
+        \end{block}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{While Rule}
+    \begin{block}{While Loop Rule}
+        \[
+        \frac{\hoare{I \wedge B}{S}{I}}
+             {\hoare{I}{\while{B}{S}}{I \wedge \neg B}}
+        \]
+        where $I$ is the loop invariant.
+    \end{block}
+    
+    \begin{example}
+        For factorial computation:
+        \begin{itemize}
+            \item Invariant: $I = (f = n! / k!)$
+            \item Guard: $B = (k > 0)$
+            \item Body maintains invariant
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}[fragile]{Weakest Precondition Example}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{block}{Program}
+            \begin{lstlisting}[language=pseudocode,numbers=none]
+x := x + 1;
+y := x * 2;
+            \end{lstlisting}
+        \end{block}
+        
+        \column{0.5\textwidth}
+        \begin{block}{Calculation}
+            \begin{align*}
+                \wp(\text{prog}, y > 10) &= \\
+                \wp(x := x + 1, \wp(y := x * 2, y > 10)) &= \\
+                \wp(x := x + 1, x * 2 > 10) &= \\
+                \wp(x := x + 1, x > 5) &= \\
+                x + 1 > 5 &= \\
+                x > 4
+            \end{align*}
+        \end{block}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Proof Tree Example}
+    \begin{center}
+    \begin{prooftree}
+        \AxiomC{$\vdash \{x = 5\} \assign{y}{x} \{y = 5\}$}
+        \AxiomC{$\vdash \{y = 5\} \assign{z}{y + 1} \{z = 6\}$}
+        \BinaryInfC{$\vdash \{x = 5\} \assign{y}{x}; \assign{z}{y + 1} \{z = 6\}$}
+    \end{prooftree}
+    \end{center}
+\end{frame}
+
+\section{Advanced Topics}
+
+\begin{frame}{Total Correctness}
+    \begin{itemize}
+        \item Partial correctness: $\hoare{P}{S}{Q}$
+        \item Total correctness: $[P]\,S\,[Q]$
+        \begin{itemize}
+            \item Additionally guarantees termination
+        \end{itemize}
+    \end{itemize}
+    
+    \begin{block}{Variant Function}
+        For while loops, need decreasing variant:
+        \begin{itemize}
+            \item $v \geq 0$ in loop body
+            \item $v$ decreases each iteration
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{C Code Example}
+    \begin{lstlisting}[language=C]
+/*@ requires n >= 0;
+    ensures \result == n * (n + 1) / 2;
+@*/
+int sum(int n) {
+    int s = 0;
+    int i = 0;
+    /*@ loop invariant s == i * (i + 1) / 2;
+        loop invariant 0 <= i <= n;
+        loop variant n - i;
+    @*/
+    while (i < n) {
+        i = i + 1;
+        s = s + i;
+    }
+    return s;
+}
+    \end{lstlisting}
+\end{frame}
+
+\end{document}

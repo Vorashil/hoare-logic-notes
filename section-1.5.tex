@@ -1,0 +1,181 @@
+% Section 1.5: Introduction to Hoare's Notation
+\section{Hoare's Notation}
+
+\begin{frame}{Hoare's Notation}
+    \begin{block}{Historical Context}
+        C.A.R. Hoare introduced the following notation called a \textbf{partial correctness specification} for specifying what a program does:
+        \begin{center}
+            \Large $\hoare{P}{C}{Q}$
+        \end{center}
+    \end{block}
+    
+    \begin{block}{Components}
+        \begin{itemize}
+            \item $C$ is a command (a program or program fragment)
+            \item $P$ and $Q$ are conditions on the program variables used in $C$
+            \item $P$ is called the \textbf{precondition}
+            \item $Q$ is called the \textbf{postcondition}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Writing Conditions}
+    \begin{block}{Mathematical Notation}
+        Conditions on program variables will be written using standard mathematical notations together with \textbf{logical operators}:
+        \begin{itemize}
+            \item $\wedge$ (and)
+            \item $\vee$ (or)
+            \item $\neg$ (not)
+            \item $\Rightarrow$ (implies)
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}
+        Some example conditions:
+        \begin{itemize}
+            \item $x > 0 \wedge y \geq 0$ (x is positive AND y is non-negative)
+            \item $x = 0 \vee y = 0$ (x equals zero OR y equals zero)
+            \item $x > 0 \Rightarrow x^2 > 0$ (if x is positive, then x squared is positive)
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Evolution of Notation}
+    \begin{block}{Historical Note}
+        Hoare's original notation was $P\ \{C\}\ Q$ not $\hoare{P}{C}{Q}$, but the latter form is now more widely used.
+    \end{block}
+    
+    \begin{block}{Alternative Notations}
+        You may encounter different notations in the literature:
+        \begin{itemize}
+            \item Original: $P\ \{C\}\ Q$
+            \item Modern: $\hoare{P}{C}{Q}$
+            \item Some texts: $\{P\}\ C\ \{Q\}$ (without special formatting)
+        \end{itemize}
+        All represent the same concept: a partial correctness specification.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Partial Correctness}
+    \begin{block}{What is Partial Correctness?}
+        A Hoare triple $\hoare{P}{C}{Q}$ expresses \textbf{partial correctness}:
+        \begin{quote}
+            \emph{If} the precondition $P$ is true before executing command $C$, \emph{and if} $C$ terminates, \emph{then} the postcondition $Q$ will be true after execution.
+        \end{quote}
+    \end{block}
+    
+    \begin{alertblock}{Important: Termination Not Guaranteed}
+        Partial correctness does \textbf{not} guarantee that the program terminates!
+        \begin{itemize}
+            \item It only says what must be true \emph{if} the program terminates
+            \item A program that loops forever can still be partially correct
+            \item Total correctness = Partial correctness + Termination
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Reading Hoare Triples}
+    \begin{block}{How to Read $\hoare{P}{C}{Q}$}
+        The triple $\hoare{P}{C}{Q}$ can be read as:
+        \begin{enumerate}
+            \item ``If $P$ is true, then after $C$ executes, $Q$ will be true''
+            \item ``$C$ transforms states satisfying $P$ into states satisfying $Q$''
+            \item ``Starting from $P$, command $C$ establishes $Q$''
+        \end{enumerate}
+    \end{block}
+    
+    \begin{example}[Simple Assignment]
+        $\hoare{x = 5}{\assign{y}{x + 1}}{y = 6}$
+        
+        This reads as: ``If $x$ equals 5 before the assignment, then $y$ will equal 6 after the assignment.''
+    \end{example}
+\end{frame}
+
+\begin{frame}{Meaning of Hoare's Notation}
+    \begin{block}{Formal Definition}
+        $\hoare{P}{C}{Q}$ is true if:
+        \begin{itemize}
+            \item whenever $C$ is executed in a state satisfying $P$
+            \item and \emph{if} the execution of $C$ terminates
+            \item then the state in which $C$ terminates satisfies $Q$
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Assignment Command]
+        Consider: $\hoare{X = 1}{X := X + 1}{X = 2}$
+        \begin{itemize}
+            \item $P$ is the condition that the value of X is 1
+            \item $Q$ is the condition that the value of X is 2
+            \item $C$ is the assignment command $X := X + 1$ (i.e. `X becomes X+1')
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Truth and Falsity of Hoare Triples}
+    \begin{example}[True Triple]
+        $\hoare{X = 1}{X := X + 1}{X = 2}$ is \textbf{true}
+        
+        \textbf{Why?} Starting from a state where $X = 1$, executing $X := X + 1$ results in $X = 2$.
+    \end{example}
+    
+    \begin{example}[False Triple]
+        $\hoare{X = 1}{X := X + 1}{X = 3}$ is \textbf{false}
+        
+        \textbf{Why?} Starting from $X = 1$, executing $X := X + 1$ results in $X = 2$, not $X = 3$.
+    \end{example}
+    
+    \begin{alertblock}{Key Insight}
+        A Hoare triple is a mathematical statement that can be either true or false. It makes a claim about what happens when a program executes.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Hoare Logic and Verification Conditions}
+    \begin{block}{What is Hoare Logic?}
+        Hoare Logic is a \textbf{deductive proof system} for Hoare triples $\hoare{P}{C}{Q}$
+        \begin{itemize}
+            \item Provides axioms and inference rules for proving program correctness
+            \item Forms the theoretical foundation for program verification
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Direct Verification with Hoare Logic}
+        \textbf{Advantages:}
+        \begin{itemize}
+            \item Original proposal by Hoare
+            \item Provides complete formal proofs
+        \end{itemize}
+        
+        \textbf{Disadvantages:}
+        \begin{itemize}
+            \item Tedious and error-prone for humans
+            \item Impractical for large programs
+            \item Requires detailed manual proof construction
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Verification Conditions}
+    \begin{block}{Modern Approach: Verification Conditions}
+        Can `compile' proving $\hoare{P}{C}{Q}$ to \textbf{verification conditions}
+        \begin{itemize}
+            \item More natural for automated reasoning
+            \item Basis for computer-assisted verification
+            \item Separates program logic from mathematical reasoning
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Key Property}
+        Proof of verification conditions is \textbf{equivalent} to proof with Hoare Logic
+        \begin{itemize}
+            \item Hoare Logic can be used to \emph{explain} verification conditions
+            \item Both approaches prove the same correctness properties
+            \item Verification conditions are more amenable to automation
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Simple Verification Condition]
+        To prove $\hoare{x > 0}{y := x + 1}{y > 1}$, we generate the verification condition:
+        \[x > 0 \Rightarrow (x + 1) > 1\]
+        This is a pure mathematical statement that can be proved without considering program execution.
+    \end{example}
+\end{frame}

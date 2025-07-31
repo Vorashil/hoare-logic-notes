@@ -1,0 +1,55 @@
+\section{A Little Programming Language}
+
+\begin{frame}{Syntax of the Language}
+    \framesubtitle{Based on Backus-Naur Form (BNF)}
+
+    \colorbox{yellow}{\bfseries Expressions:}
+    \[ E \bnfdef N \bnfor V \bnfor E_1 + E_2 \bnfor E_1 - E_2 \bnfor E_1 \times E_2 \bnfor \dots \]
+
+    \vspace{0.7cm}
+
+    \colorbox{yellow}{\bfseries Boolean expressions:}
+    \[ B \bnfdef \mathbf{T} \bnfor \mathbf{F} \bnfor E_1=E_2 \bnfor E_1 \le E_2 \bnfor \dots \]
+
+    \vspace{0.7cm}
+
+    \colorbox{yellow}{\bfseries Commands:}
+    \[
+        \begin{array}{lcl}
+            C & \bnfdef & \assign{V}{E} \\
+            & \bnfor  & \seq{C_1}{C_2} \\
+            & \bnfor  & \text{IF } B \text{ THEN } C_1 \text{ ELSE } C_2 \\
+            & \bnfor  & \text{WHILE } B \text{ DO } C'
+        \end{array}
+    \]
+\end{frame}
+
+\begin{frame}[fragile]{Example Programs - 1}
+    \framesubtitle{Illustrating the language syntax}
+
+    \begin{block}{Factorial of a number `n`}
+        This program computes $n!$ and stores the result in the variable `fact`. It assumes the variable `n` holds a non-negative integer. The body of the `while` loop is a sequence of two assignment commands.
+        \begin{lstlisting}[language=pseudocode, numbers=none]
+fact := 1;
+i := n;
+while i > 0 do
+    fact := fact * i;
+    i := i - 1
+        \end{lstlisting}
+    \end{block}
+
+    \end{frame}
+\begin{frame}[fragile]{Example Programs - 2}
+
+
+    \begin{block}{Maximum of two numbers `x` and `y`}
+        This program uses a conditional statement to find the maximum of two numbers, `x` and `y`, and stores the result in `max`.
+        \begin{lstlisting}[language=pseudocode, numbers=none]
+if x <= y then
+    max := y
+else
+    max := x
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
