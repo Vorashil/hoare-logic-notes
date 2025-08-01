@@ -1,0 +1,102 @@
+% Section 14: Finding Invariants
+\section{Finding Invariants}
+
+\begin{frame}{How Does One Find an Invariant?}
+    \begin{block}{The WHILE-rule}
+        \[ \frac{\vdash \{P \wedge S\} \; C \; \{P\}}{\vdash \{P\} \; \texttt{WHILE } S \texttt{ DO } C \; \{P \wedge \neg S\}} \]
+    \end{block}
+
+    \begin{block}{Look at the Facts}
+        \begin{itemize}
+            \item Invariant $P$ must hold initially
+            \item With the negated test $\neg S$ the invariant $P$ must establish the result
+            \item When the test $S$ holds, the body must leave the invariant $P$ unchanged
+        \end{itemize}
+    \end{block}
+
+\end{frame}
+\begin{frame}{How Does One Find an Invariant?}
+    \begin{block}{Think About How the Loop Works}
+        The invariant should say that:
+        \begin{itemize}
+            \item What \emph{has been done so far} together with what \emph{remains to be done}
+            \item Holds \emph{at each iteration} of the loop
+            \item And gives \emph{the desired result} when the loop terminates
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Factorial Program}
+    \begin{block}{Consider a Factorial Program}
+        \begin{align*}
+        \{X=n \wedge Y=1\} \\
+        \texttt{WHILE } X \neq 0 \texttt{ DO} \\
+        \quad (Y:=Y \times X; \; X:=X-1) \\
+        \{X=0 \wedge Y=n!\}
+        \end{align*}
+    \end{block}
+
+
+    \begin{block}{Look at the Facts}
+        \begin{itemize}
+            \item Initially $X=n$ and $Y=1$
+            \item Finally $X=0$ and $Y=n!$
+            \item On each loop $Y$ is increased and $X$ is decreased
+        \end{itemize}
+    \end{block}
+
+\end{frame}
+\begin{frame}{Example: Factorial Program}
+    \begin{block}{Think How the Loop Works}
+        \begin{itemize}
+            \item $Y$ holds the result so far
+            \item $X!$ is what remains to be computed
+            \item $n!$ is the desired result
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{The Invariant}
+        The invariant is $X! \times Y = n!$
+        \begin{itemize}
+            \item `stuff to be done' $\times$ `result so far' = `desired result'
+            \item Decrease in $X$ combines with increase in $Y$ to make invariant
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Related Example}
+    \begin{block}{Another Factorial-like Program}
+        \begin{align*}
+        \{X=0 \wedge Y=1\} \\
+        \texttt{WHILE } X < N \texttt{ DO } (X:=X+1; \; Y:=Y \times X) \\
+        \{Y=N!\}
+        \end{align*}
+    \end{block}
+    
+    \begin{block}{Look at the Facts}
+        \begin{itemize}
+            \item Initially $X=0$ and $Y=1$
+            \item Finally $X=N$ and $Y=N!$
+            \item On each iteration both $X$ and $Y$ increase: $X$ by 1 and $Y$ by $X$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{First Attempt}
+        \begin{itemize}
+            \item An invariant is $Y = X!$
+            \item At end need $Y = N!$, but WHILE-rule only gives $\neg(X<N)$
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Ah Ha!}
+        Invariant needed: $Y = X! \wedge X \leq N$
+    \end{alertblock}
+    
+    \begin{block}{Why This Works}
+        \begin{itemize}
+            \item At end: $X \leq N \wedge \neg(X<N) \Rightarrow X=N$
+            \item Often need to strengthen invariants to get them to work
+            \item Typical to add stuff to `carry along' like $X \leq N$
+        \end{itemize}
+    \end{block}
+\end{frame}

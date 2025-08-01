@@ -1,0 +1,229 @@
+% Section 13: WHILE Loops and Invariants
+\section{WHILE Loops and Invariants}
+
+\begin{frame}{WHILE-commands}
+    \begin{block}{Syntax and Semantics}
+        \begin{itemize}
+            \item \textbf{Syntax}: \texttt{WHILE } $S$ \texttt{ DO } $C$
+            \item \textbf{Semantics}:
+            \begin{itemize}
+                \item If the statement $S$ is true in the current state, then $C$ is executed and the WHILE-command is repeated
+                \item If $S$ is false, then nothing is done
+                \item Thus $C$ is repeatedly executed until the value of $S$ becomes false
+                \item If $S$ never becomes false, then the execution of the command never terminates
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Simple WHILE Loop]
+        \texttt{WHILE $\neg(X=0)$ DO X:= X-2}
+        \begin{itemize}
+            \item If the value of X is non-zero, then its value is decreased by 2 and then the process is repeated
+            \item This WHILE-command will terminate (with X having value 0) if the value of X is an even non-negative number
+            \item In all other states it will not terminate
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{The Challenge of WHILE Loops}
+    \begin{block}{Why WHILE Loops are Difficult}
+        \begin{itemize}
+            \item Unlike sequence and conditionals, we don't know how many times the loop will execute
+            \item We need to reason about \emph{all possible} number of iterations
+            \item The loop might not terminate at all!
+            \item We need a way to capture what stays true throughout the loop
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Key Insight: Invariants}
+        \begin{itemize}
+            \item An \textbf{invariant} is a property that remains true before and after each iteration
+            \item If we can find an appropriate invariant, we can reason about the loop
+            \item The invariant captures the ``essence'' of what the loop does
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Invariants}
+    \begin{block}{Definition}
+        Suppose $\vdash \{P \wedge S\} \; C \; \{P\}$
+        
+        $P$ is said to be an \emph{invariant of $C$ whenever $S$ holds}
+    \end{block}
+    
+    \begin{block}{The WHILE-rule Intuition}
+        The WHILE-rule says that:
+        \begin{itemize}
+            \item \emph{if} $P$ is an invariant of the body of a WHILE-command whenever the test condition holds
+            \item \emph{then} $P$ is an invariant of the whole WHILE-command
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{In Other Words}
+        \begin{itemize}
+            \item If executing $C$ \emph{once} preserves the truth of $P$
+            \item Then executing $C$ \emph{any number of times} also preserves the truth of $P$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{After Termination}
+    \begin{block}{What Happens When the Loop Exits?}
+        The WHILE-rule also expresses the fact that after a WHILE-command has terminated, the test must be false
+        \begin{itemize}
+            \item Otherwise, it wouldn't have terminated
+            \item So we know both:
+            \begin{itemize}
+                \item The invariant $P$ still holds
+                \item The test condition $S$ is false (i.e., $\neg S$ is true)
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Power of Invariants}
+        This gives us a powerful way to reason about loops:
+        \begin{enumerate}
+            \item Find an invariant $P$ that captures the essential property
+            \item Prove that $P$ is preserved by the loop body when $S$ is true
+            \item Conclude that after the loop, we have $P \wedge \neg S$
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{The WHILE-Rule}
+    \begin{block}{The WHILE-rule}
+        \[ \frac{\vdash \{P \wedge S\} \; C \; \{P\}}{\vdash \{P\} \; \texttt{WHILE } S \texttt{ DO } C \; \{P \wedge \neg S\}} \]
+    \end{block}
+    
+    \begin{block}{Understanding the Rule}
+        \begin{itemize}
+            \item \textbf{Premise}: If $P$ and $S$ are both true, then after executing $C$, $P$ is still true
+            \item \textbf{Conclusion}: Starting with $P$ true, after the WHILE loop, $P$ is still true AND $S$ is false
+            \item The invariant $P$ is maintained throughout all iterations
+            \item When the loop exits, we additionally know that $S$ is false
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Integer Division}
+    \begin{block}{Goal}
+        Prove that the following computes integer division:
+    \end{block}
+    
+    \begin{example}[Division by Repeated Subtraction]
+        It is easy to show:
+        \[\vdash \{X=R+(Y \times Q) \wedge Y \leq R\} \; R:=R-Y; \; Q:=Q+1 \; \{X=R+(Y \times Q)\}\]
+        
+        Hence by the WHILE-rule with $P = \text{`}X=R+(Y \times Q)\text{'}$ and $S = \text{`}Y \leq R\text{'}$:
+        
+        \begin{align*}
+        \vdash \{X=R+(Y \times Q)\} \\
+        \texttt{WHILE } Y \leq R \texttt{ DO} \\
+        \quad (R:=R-Y; \; Q:=Q+1) \\
+        \{X=R+(Y \times Q) \wedge \neg(Y \leq R)\}
+        \end{align*}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Analyzing the Division Example}
+    \begin{block}{The Invariant}
+        $P: X = R + (Y \times Q)$ captures the relationship between:
+        \begin{itemize}
+            \item $X$: the original dividend
+            \item $R$: the current remainder
+            \item $Y$: the divisor
+            \item $Q$: the quotient being computed
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Why This Works}
+        \begin{itemize}
+            \item Initially: $R = X$ and $Q = 0$, so $X = R + (Y \times 0) = R$
+            \item Each iteration: We subtract $Y$ from $R$ and add 1 to $Q$
+            \item The invariant $X = R + (Y \times Q)$ is preserved
+            \item When done: $\neg(Y \leq R)$ means $R < Y$
+            \item So we have: $X = R + (Y \times Q)$ with $0 \leq R < Y$
+            \item This is exactly the definition of integer division!
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Finding Good Invariants}
+    \begin{block}{The Art of Finding Invariants}
+        Finding the right invariant is often the hardest part:
+        \begin{itemize}
+            \item It must be true initially (before the loop starts)
+            \item It must be preserved by each iteration
+            \item Combined with the negated test, it must imply the desired postcondition
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Common Patterns}
+        \begin{itemize}
+            \item \textbf{Accumulation}: Invariant tracks partial results (like sum so far)
+            \item \textbf{Bounds}: Invariant maintains bounds on variables
+            \item \textbf{Relationships}: Invariant preserves relationships between variables
+            \item \textbf{Progress}: Invariant shows we're making progress toward goal
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Remember}
+        The invariant doesn't say what changes—it says what stays the same!
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Example: Complete Division Program}
+    \begin{block}{From the Previous Slide}
+        \begin{align*}
+        \vdash \{X=R+(Y \times Q)\} \\
+        \texttt{WHILE } Y \leq R \texttt{ DO} \\
+        \quad (R:=R-Y; \; Q:=Q+1) \\
+        \{X=R+(Y \times Q) \wedge \neg(Y \leq R)\}
+        \end{align*}
+    \end{block}
+
+    \begin{block}{Setting Up the Division}
+        It is easy to deduce that:
+        \[\vdash \{\mathbf{T}\} \; R:=X; \; Q:=0 \; \{X=R+(Y \times Q)\}\]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Complete Division Program}
+    \begin{block}{Complete Program}
+        Hence by the sequencing rule and postcondition weakening:
+        \begin{align*}
+        \vdash \{\mathbf{T}\} \\
+        R:=X; \\
+        Q:=0; \\
+        \texttt{WHILE } Y \leq R \texttt{ DO} \\
+        \quad (R:=R-Y; \; Q:=Q+1) \\
+        \{R < Y \wedge X=R+(Y \times Q)\}
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Summary}
+    \begin{block}{What We Have Given}
+        \begin{itemize}
+            \item A notation for specifying what a program does
+            \item A way of proving that it meets its specification
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Next Topics}
+        Now we look at ways of finding proofs and organizing them:
+        \begin{itemize}
+            \item Finding invariants
+            \item Derived rules
+            \item Backwards proofs
+            \item Annotating programs prior to proof
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Automation}
+        Then we see how to automate program verification:
+        \begin{itemize}
+            \item The automation mechanizes some of these ideas
+        \end{itemize}
+    \end{block}
+\end{frame}
