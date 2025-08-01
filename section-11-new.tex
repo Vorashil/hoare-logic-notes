@@ -1,0 +1,157 @@
+% Section 11: Rules of Consequence
+\section{Rules of Consequence}
+
+\begin{frame}{Precondition Strengthening}
+    \begin{block}{Recall}
+        Recall that
+        \[ \frac{\vdash S_1, \ldots, \vdash S_n}{\vdash S} \]
+        means $\vdash S$ can be deduced from $\vdash S_1, \ldots, \vdash S_n$
+    \end{block}
+
+\end{frame}
+
+\begin{frame}{Precondition Strengthening}
+    \begin{block}{The Rule}
+        Using this notation, the rule of \textbf{precondition strengthening} is:
+        \[ \frac{\vdash P \Rightarrow P', \quad \vdash \{P'\} \; C \; \{Q\}}{\vdash \{P\} \; C \; \{Q\}} \]
+    \end{block}
+    \begin{alertblock}{Note}
+        The two hypotheses are different kinds of judgements:
+        \begin{itemize}
+            \item $\vdash P \Rightarrow P'$ is a mathematical/logical judgement
+            \item $\vdash \{P'\} \; C \; \{Q\}$ is a program correctness judgement
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Understanding Precondition Strengthening}
+    \begin{block}{What Does This Rule Mean?}
+        \begin{itemize}
+            \item If $P$ implies $P'$ (i.e., $P$ is stronger than $P'$)
+            \item And we know that $\{P'\} \; C \; \{Q\}$ holds
+            \item Then $\{P\} \; C \; \{Q\}$ also holds
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Intuition}
+        \begin{itemize}
+            \item A stronger precondition gives us more information
+            \item If the program works correctly with less information ($P'$)
+            \item It will certainly work with more information ($P$)
+            \item ``Demanding more from the input never hurts''
+        \end{itemize}
+    \end{block}
+
+
+\end{frame}
+\begin{frame}{Understanding Precondition Strengthening}
+    \begin{example}[Simple Example]
+        \begin{itemize}
+            \item Know: $\vdash \{x > 0\} \; y := x \; \{y > 0\}$
+            \item Have: $x = 5 \Rightarrow x > 0$
+            \item Conclude: $\vdash \{x = 5\} \; y := x \; \{y > 0\}$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Postcondition Weakening}
+    \begin{block}{The Dual Rule}
+        Just as the previous rule allows the precondition of a partial correctness specification to be strengthened, the following one allows us to weaken the postcondition
+    \end{block}
+
+    \begin{block}{Postcondition Weakening Rule}
+        \[ \frac{\vdash \{P\} \; C \; \{Q'\}, \quad \vdash Q' \Rightarrow Q}{\vdash \{P\} \; C \; \{Q\}} \]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Understanding Postcondition Weakening}
+    \begin{block}{What Does This Rule Mean?}
+        \begin{itemize}
+            \item If we can establish $\{P\} \; C \; \{Q'\}$
+            \item And $Q'$ implies $Q$ (i.e., $Q'$ is stronger than $Q$)
+            \item Then $\{P\} \; C \; \{Q\}$ also holds
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Intuition}
+        \begin{itemize}
+            \item If the program establishes a strong property ($Q'$)
+            \item It automatically establishes any weaker property ($Q$)
+            \item ``Promising less in the output is always safe''
+        \end{itemize}
+    \end{block}
+
+    \begin{example}[Simple Example]
+        \begin{itemize}
+            \item Know: $\vdash \{x = 5\} \; y := x + 1 \; \{y = 6\}$
+            \item Have: $y = 6 \Rightarrow y > 0$
+            \item Conclude: $\vdash \{x = 5\} \; y := x + 1 \; \{y > 0\}$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{The Rule of Consequence}
+    \begin{block}{Combining Both Rules}
+        Often we use both precondition strengthening and postcondition weakening together. This gives us the general \textbf{rule of consequence}:
+
+        \[ \frac{\vdash P \Rightarrow P', \quad \vdash \{P'\} \; C \; \{Q'\}, \quad \vdash Q' \Rightarrow Q}{\vdash \{P\} \; C \; \{Q\}} \]
+    \end{block}
+
+    \begin{block}{When to Use}
+        This rule is essential for:
+        \begin{itemize}
+            \item Adapting existing proofs to new situations
+            \item Simplifying complex preconditions or postconditions
+            \item Connecting different parts of a larger proof
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Using the Rule of Consequence}
+    \begin{example}[Complete Example]
+        Want to prove: $\vdash \{x = 10 \wedge y = 5\} \; z := x - y \; \{z > 0\}$
+
+        \begin{enumerate}
+            \item By assignment axiom:
+            \[\vdash \{x - y > 0\} \; z := x - y \; \{z > 0\}\]
+
+            \item We need to show: $x = 10 \wedge y = 5 \Rightarrow x - y > 0$
+            \begin{itemize}
+                \item If $x = 10$ and $y = 5$, then $x - y = 5$
+                \item And $5 > 0$ is true
+            \end{itemize}
+
+            \item By precondition strengthening:
+            \[\vdash \{x = 10 \wedge y = 5\} \; z := x - y \; \{z > 0\}\]
+        \end{enumerate}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Why These Rules Matter}
+    \begin{block}{Practical Importance}
+        The rules of consequence are crucial because:
+        \begin{itemize}
+            \item Real programs rarely have specifications that match axioms exactly
+            \item We need to adapt and combine different proof rules
+            \item They allow modular reasoning about programs
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Key Insight}
+        These rules formalize the intuition that:
+        \begin{itemize}
+            \item \textbf{Preconditions}: ``If it works with less, it works with more''
+            \item \textbf{Postconditions}: ``If it achieves more, it achieves less''
+        \end{itemize}
+    \end{block}
+\end{frame}
+\begin{frame}{Why These Rules Matter}
+
+    \begin{alertblock}{Remember}
+        The direction matters:
+        \begin{itemize}
+            \item Preconditions can be \emph{strengthened} (made more specific)
+            \item Postconditions can be \emph{weakened} (made more general)
+        \end{itemize}
+    \end{alertblock}
+\end{frame}

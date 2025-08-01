@@ -1,0 +1,132 @@
+% Section 12: Formal Proofs and Sequencing
+\section{Formal Proofs and the Sequencing Rule}
+
+\begin{frame}{An Example Formal Proof}
+    \begin{block}{A Little Formal Proof}
+        Here is a little formal proof:
+    \end{block}
+    
+    \begin{enumerate}
+        \item $\vdash \{R=X \wedge 0=0\} \; Q:=0 \; \{R=X \wedge Q=0\}$ \hfill By the assignment axiom
+        \item $\vdash R=X \Rightarrow R=X \wedge 0=0$ \hfill By pure logic
+        \item $\vdash \{R=X\} \; Q:=0 \; \{R=X \wedge Q=0\}$ \hfill By precondition strengthening
+        \item $\vdash R=X \wedge Q=0 \Rightarrow R=X+(Y \times Q)$ \hfill By laws of arithmetic
+        \item $\vdash \{R=X\} \; Q:=0 \; \{R=X+(Y \times Q)\}$ \hfill By postcondition weakening
+    \end{enumerate}
+    
+    \begin{block}{Note}
+        The rules precondition strengthening and postcondition weakening are sometimes called the \emph{rules of consequence}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analyzing the Example Proof}
+    \begin{block}{What This Proof Shows}
+        We proved: $\vdash \{R=X\} \; Q:=0 \; \{R=X+(Y \times Q)\}$
+        \begin{itemize}
+            \item Starting with $R = X$
+            \item After setting $Q$ to $0$
+            \item We have $R = X + (Y \times 0) = X$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Key Steps}
+        \begin{enumerate}
+            \item Started with assignment axiom for $Q := 0$
+            \item Strengthened precondition from $R=X \wedge 0=0$ to just $R=X$
+            \item Weakened postcondition using arithmetic ($Y \times 0 = 0$)
+        \end{enumerate}
+    \end{block}
+    
+    \begin{block}{Lesson}
+        Even simple proofs often require the rules of consequence to connect axioms with desired specifications
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Sequencing Rule}
+    \begin{block}{Syntax and Semantics}
+        \begin{itemize}
+            \item \textbf{Syntax}: $C_1; \cdots; C_n$
+            \item \textbf{Semantics}: the commands $C_1, \cdots, C_n$ are executed in that order
+            \item \textbf{Example}: $R:=X; \; X:=Y; \; Y:=R$
+            \begin{itemize}
+                \item The values of $X$ and $Y$ are swapped using $R$ as a temporary variable
+                \item Note \emph{side effect}: value of $R$ changed to the old value of $X$
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Sequencing Rule}
+        \[ \frac{\vdash \{P\} \; C_1 \; \{Q\}, \quad \vdash \{Q\} \; C_2 \; \{R\}}{\vdash \{P\} \; C_1; C_2 \; \{R\}} \]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Understanding the Sequencing Rule}
+    \begin{block}{What the Rule Says}
+        \begin{itemize}
+            \item If $C_1$ transforms state from $P$ to $Q$
+            \item And $C_2$ transforms state from $Q$ to $R$
+            \item Then $C_1; C_2$ transforms state from $P$ to $R$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Middle Condition}
+        \begin{itemize}
+            \item $Q$ acts as a ``glue'' between the two commands
+            \item It must be the postcondition of $C_1$
+            \item And the precondition of $C_2$
+            \item Finding the right $Q$ is often the key to sequencing proofs
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Generalization}
+        For $n$ commands: need $n-1$ intermediate conditions
+        \[ \{P\} \; C_1 \; \{Q_1\} \; C_2 \; \{Q_2\} \; \cdots \; C_{n-1} \; \{Q_{n-1}\} \; C_n \; \{R\} \]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example Proof: Variable Swap}
+    \begin{block}{Goal}
+        Prove the variable swap works correctly
+    \end{block}
+    
+    Example: By the assignment axiom:
+    \begin{align*}
+        \text{(i)} \quad & \vdash \{X=x \wedge Y=y\} \; R:=X \; \{R=x \wedge Y=y\} \\
+        \text{(ii)} \quad & \vdash \{R=x \wedge Y=y\} \; X:=Y \; \{R=x \wedge X=y\} \\
+        \text{(iii)} \quad & \vdash \{R=x \wedge X=y\} \; Y:=R \; \{Y=x \wedge X=y\}
+    \end{align*}
+    
+    Hence by (i), (ii) and the sequencing rule:
+    \begin{align*}
+        \text{(iv)} \quad & \vdash \{X=x \wedge Y=y\} \; R:=X; \; X:=Y \; \{R=x \wedge X=y\}
+    \end{align*}
+    
+    Hence by (iv) and (iii) and the sequencing rule:
+    \begin{align*}
+        \text{(v)} \quad & \vdash \{X=x \wedge Y=y\} \; R:=X; \; X:=Y; \; Y:=R \; \{Y=x \wedge X=y\}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Breaking Down the Swap Proof}
+    \begin{block}{Step-by-Step Analysis}
+        Starting with $X=x$ and $Y=y$:
+        \begin{enumerate}
+            \item After $R:=X$: we have $R=x$, $X=x$, $Y=y$
+            \item After $X:=Y$: we have $R=x$, $X=y$, $Y=y$ 
+            \item After $Y:=R$: we have $R=x$, $X=y$, $Y=x$
+        \end{enumerate}
+        Final result: $X$ and $Y$ are swapped!
+    \end{block}
+    
+    \begin{block}{Key Observation}
+        \begin{itemize}
+            \item Each intermediate assertion captures the exact state
+            \item We track all variables, including the temporary $R$
+            \item The proof is compositional: we prove each step separately
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Note on Auxiliary Variables}
+        The lowercase $x$ and $y$ are auxiliary variables that remember the initial values
+    \end{alertblock}
+\end{frame}
