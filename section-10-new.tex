@@ -1,0 +1,116 @@
+% Section 10: Validity and Limitations
+\section{Validity and Limitations of the Assignment Axiom}
+
+\begin{frame}{Validity}
+    \begin{block}{The Importance of Validity}
+        Important to establish the validity of axioms and rules
+    \end{block}
+    
+    \begin{block}{Formal Semantics and Soundness}
+        Later will give a \emph{formal semantics} of our little programming language
+        \begin{itemize}
+            \item Then \emph{prove} axioms and rules of inference of Floyd-Hoare logic are sound
+            \item This will only increase our confidence in the axioms and rules to the extent that we believe the correctness of the formal semantics!
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Assignment Axiom in Real Languages}
+    \begin{alertblock}{Important Limitation}
+        The Assignment Axiom is not valid for `real' programming languages
+    \end{alertblock}
+    
+    \begin{block}{Historical Note}
+        In an early PhD on Hoare Logic, G. Ligler showed that the assignment axiom can fail to hold in six different ways for the language Algol 60
+    \end{block}
+    
+    \begin{block}{Why This Matters}
+        \begin{itemize}
+            \item Our simple language has carefully chosen features
+            \item Real languages have complications that break the axiom
+            \item Understanding these limitations helps us apply Hoare Logic correctly
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Expressions with Side Effects}
+    \begin{block}{The Hidden Assumption}
+        The validity of the assignment axiom depends on expressions not having side effects
+    \end{block}
+    
+    \begin{example}[Block Expression]
+        Suppose our language were extended to contain the `block expression':
+        \begin{center}
+            \texttt{BEGIN Y:=1; 2 END}
+        \end{center}
+        \begin{itemize}
+            \item This expression has value 2
+            \item But its evaluation also `side effects' the variable Y by storing 1 in it
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Why Side Effects Break the Assignment Axiom}
+    \begin{block}{The Problem}
+        If the assignment axiom applied to block expressions, then it could be used to deduce:
+        \[ \vdash \{Y=0\} \; X := \texttt{BEGIN Y:=1; 2 END} \; \{Y=0\} \]
+    \end{block}
+    
+    \begin{block}{The Faulty Reasoning}
+        \begin{itemize}
+            \item Since $(Y=0)[E/X] = (Y=0)$ (because X does not occur in $(Y=0)$)
+            \item By the assignment axiom, we'd conclude the above
+            \item This is clearly false: after the assignment Y will have the value 1!
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{The Lesson}
+        The assignment axiom only works when expressions are \textbf{pure} (no side effects)
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Other Ways the Assignment Axiom Can Fail}
+    \begin{block}{Real Language Complications}
+        In real programming languages, the assignment axiom can fail due to:
+        \begin{enumerate}
+            \item \textbf{Side effects in expressions} (as we just saw)
+            \item \textbf{Aliasing}: multiple names for the same location
+            \item \textbf{Call by reference}: procedure parameters that modify variables
+            \item \textbf{Global variables}: hidden dependencies between parts of code
+            \item \textbf{Undefined behavior}: division by zero, array bounds violations
+            \item \textbf{Concurrent modification}: other threads changing variables
+        \end{enumerate}
+    \end{block}
+    
+    \begin{block}{Defensive Programming}
+        Understanding these limitations helps us:
+        \begin{itemize}
+            \item Design better programming languages
+            \item Write more verifiable code
+            \item Know when we can trust our formal proofs
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Aliasing Breaking the Assignment Axiom}
+    \begin{example}[Aliasing Problem]
+        Consider if our language had arrays and we tried:
+        \[ \vdash \{A[i] = 5\} \; A[j] := 0 \; \{A[i] = 5\} \]
+        
+        The assignment axiom would suggest this is valid because:
+        \begin{itemize}
+            \item $(A[i] = 5)[0/A[j]]$ might seem to be just $(A[i] = 5)$
+            \item But what if $i = j$? Then $A[i]$ and $A[j]$ are the same location!
+            \item After the assignment, $A[i] = 0$, not 5
+        \end{itemize}
+    \end{example}
+    
+    \begin{block}{The Solution}
+        In real verification:
+        \begin{itemize}
+            \item Must track when different expressions might refer to same location
+            \item Need more sophisticated rules for arrays and pointers
+            \item This leads to \emph{separation logic} and other advanced techniques
+        \end{itemize}
+    \end{block}
+\end{frame}

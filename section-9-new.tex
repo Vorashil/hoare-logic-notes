@@ -1,0 +1,235 @@
+% Section 9: Language and Substitution
+\section{Foundations for Axioms and Rules}
+
+\begin{frame}{Reminder of our Little Programming Language}
+    \begin{block}{Axiomatic Semantics}
+        The proof rules that follow constitute an \emph{axiomatic semantics} of our programming language
+    \end{block}
+
+    \begin{block}{Expressions}
+        \[ E ::= N \mid V \mid E_1 + E_2 \mid E_1 - E_2 \mid E_1 \times E_2 \mid \ldots \]
+    \end{block}
+
+    \begin{block}{Boolean expressions}
+        \[ B ::= \mathbf{T} \mid \mathbf{F} \mid E_1 = E_2 \mid E_1 \leq E_2 \mid \ldots \]
+    \end{block}
+
+
+\end{frame}
+
+\begin{frame}{Reminder of our Little Programming Language - 2}
+    \begin{block}{Commands}
+        \begin{align*}
+            C ::= & \quad V := E & \text{Assignments} \\
+            & \mid C_1 ; C_2 & \text{Sequences} \\
+            & \mid \text{IF } B \text{ THEN } C_1 \text{ ELSE } C_2 & \text{Conditionals} \\
+            & \mid \text{WHILE } B \text{ DO } C & \text{WHILE-commands}
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Substitution Notation}
+    \begin{block}{Definition}
+        $Q[E/V]$ is the result of replacing all occurrences of $V$ in $Q$ by $E$
+        \begin{itemize}
+            \item Read $Q[E/V]$ as `$Q$ with $E$ for $V$'
+            \item For example: $(X+1 > X)[Y+Z/X] = ((Y+Z)+1 > Y+Z)$
+            \item Ignoring issues with bound variables for now (e.g. variable capture)
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Substitution in Terms}
+        Same notation for substituting into terms, e.g. $E_1[E_2/V]$
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Cancellation Law}
+    \begin{block}{Substitution as Cancellation}
+        Think of this notation as the `cancellation law'
+        \[ V[E/V] = E \]
+        which is analogous to the cancellation property of fractions
+        \[ v \times (e/v) = e \]
+    \end{block}
+
+    \begin{alertblock}{Important Property}
+        Note that $Q[x/V]$ doesn't contain $V$ (if $V \neq x$)
+    \end{alertblock}
+
+\end{frame}
+
+\begin{frame}{The Cancellation Law - 2}
+    \begin{example}[Substitution Examples]
+        \begin{itemize}
+            \item $(X + Y > 0)[5/X] = (5 + Y > 0)$
+            \item $(X \times X = Y)[X+1/X] = ((X+1) \times (X+1) = Y)$
+            \item $(X > Y \wedge Y > Z)[W/Y] = (X > W \wedge W > Z)$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Why Substitution Matters}
+    \begin{block}{Connection to Assignment}
+        Substitution notation is crucial for understanding the assignment axiom:
+        \begin{itemize}
+            \item If we want $Q$ to be true after $V := E$
+            \item Then $Q[E/V]$ must be true before
+            \item Because after assignment, $V$ will have the value that $E$ had before
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Preview: Assignment Axiom}
+        This leads to the assignment axiom (details coming next)
+    \end{block}
+\end{frame}
+
+\begin{frame}{Reading Inference Rules}
+    \begin{block}{Inference Rule Notation}
+        Before we see the axioms and rules, let's understand the notation:
+        \[ \frac{\text{premises}}{\text{conclusion}} \]
+        \begin{itemize}
+            \item The line is read as ``implies'' or ``allows us to derive''
+            \item Above the line: what we need to prove (premises)
+            \item Below the line: what we can conclude
+            \item If nothing above the line: it's an \textbf{axiom} (needs no proof)
+        \end{itemize}
+    \end{block}
+    
+\end{frame}
+
+\begin{frame}{Reading Inference Rules - 2}
+    \begin{example}[Reading an Inference Rule]
+        \[ \frac{A \quad B}{C} \]
+        This means: ``If we can prove $A$ and we can prove $B$, then we can conclude $C$''
+    \end{example}
+\end{frame}
+
+\begin{frame}{The Assignment Axiom}
+    \begin{block}{Assignment Axiom}
+        Now we can understand the assignment axiom:
+        \[ \frac{}{\{Q[E/V]\} \; V := E \; \{Q\}} \]
+        \begin{itemize}
+            \item Nothing above the line = this is an axiom
+            \item Below the line = what we can always conclude
+            \item Read: ``We can always derive that $\{Q[E/V]\} \; V := E \; \{Q\}$ is true''
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Understanding the Axiom}
+        Read backwards: to achieve $Q$ after $V := E$, need $Q[E/V]$ before
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Assignment Axiom (Hoare)}
+    \begin{block}{Assignment Syntax and Semantics}
+        \begin{itemize}
+            \item \textbf{Syntax}: $V := E$
+            \item \textbf{Semantics}: value of $V$ in final state is value of $E$ in initial state
+            \item \textbf{Example}: $X := X + 1$ (adds one to the value of the variable $X$)
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Assignment Axiom}
+        \[ \vdash \{Q[E/V]\} \; V := E \; \{Q\} \]
+        Where $V$ is any variable, $E$ is any expression, $Q$ is any statement.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Instances of the Assignment Axiom}
+    \begin{block}{Examples}
+        Instances of the assignment axiom are:
+        \begin{itemize}
+            \item $\vdash \{E = x\} \; V := E \; \{V = x\}$
+            \item $\vdash \{Y = 2\} \; X := 2 \; \{Y = X\}$
+            \item $\vdash \{X + 1 = n + 1\} \; X := X + 1 \; \{X = n + 1\}$
+            \item $\vdash \{E = E\} \; X := E \; \{X = E\}$ (if $X$ does not occur in $E$)
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Key Insight}
+        The precondition is obtained by substituting $E$ for $V$ in the postcondition!
+    \end{block}
+\end{frame}
+
+\begin{frame}{Understanding the Assignment Axiom}
+    \begin{block}{Why Does This Work?}
+        Let's think step by step:
+        \begin{enumerate}
+            \item We want property $Q$ to hold after executing $V := E$
+            \item After the assignment, $V$ has the value that $E$ had before
+            \item So if we want $Q$ to be true about $V$ after...
+            \item Then $Q$ must have been true about $E$ before!
+            \item That's exactly what $Q[E/V]$ expresses
+        \end{enumerate}
+    \end{block}
+    
+    \begin{example}[Step-by-Step]
+        Want: $\{?\} \; X := Y + 1 \; \{X > 5\}$
+        \begin{itemize}
+            \item After: $X > 5$ must be true
+            \item Before: $(Y + 1) > 5$ must be true
+            \item So: $\{Y + 1 > 5\} \; X := Y + 1 \; \{X > 5\}$
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{The Backwards Fallacy}
+    \begin{block}{Common Misconception}
+        Many people feel the assignment axiom is `backwards'
+    \end{block}
+    
+    \begin{block}{First Erroneous Intuition}
+        One common erroneous intuition is that it should be:
+        \[ \vdash \{P\} \; V := E \; \{P[V/E]\} \]
+        where $P[V/E]$ denotes the result of substituting $V$ for $E$ in $P$
+    \end{block}
+    
+    \begin{alertblock}{Why This is Wrong}
+        This has the false consequence $\vdash \{X = 0\} \; X := 1 \; \{X = 0\}$
+        \begin{itemize}
+            \item Since $(X = 0)[X/1]$ is equal to $(X = 0)$ 
+            \item Because $1$ doesn't occur in $(X = 0)$
+            \item But clearly $X$ cannot equal $0$ after we set it to $1$!
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{The Backwards Fallacy - 2}
+    \begin{block}{Second Erroneous Intuition}
+        Another erroneous intuition is that it should be:
+        \[ \vdash \{P\} \; V := E \; \{P[E/V]\} \]
+    \end{block}
+    
+    \begin{alertblock}{Why This is Also Wrong}
+        This has the false consequence $\vdash \{X = 0\} \; X := 1 \; \{1 = 0\}$
+        \begin{itemize}
+            \item Taking $P$ to be $X = 0$, $V$ to be $X$, and $E$ to be $1$
+            \item We get $(X = 0)[1/X] = (1 = 0)$
+            \item But $1 = 0$ is always false!
+        \end{itemize}
+    \end{alertblock}
+    
+    \begin{block}{The Correct Direction}
+        The assignment axiom goes ``backwards'' because we substitute in the \emph{precondition}, not the postcondition!
+    \end{block}
+\end{frame}
+
+\begin{frame}{Why ``Backwards'' is Actually Forward}
+    \begin{block}{Think About Information Flow}
+        The assignment axiom seems backwards but it's actually forward-thinking:
+        \begin{itemize}
+            \item We start with what we \emph{want} (the postcondition $Q$)
+            \item We work out what we \emph{need} (the precondition $Q[E/V]$)
+            \item This is called \textbf{weakest precondition reasoning}
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Working Backwards]
+        Goal: Ensure $Y = 10$ after $Y := X \times 2$
+        \begin{itemize}
+            \item Postcondition: $Y = 10$
+            \item Substitute: $(Y = 10)[X \times 2/Y] = (X \times 2 = 10)$
+            \item Simplify: $X = 5$
+            \item Result: $\{X = 5\} \; Y := X \times 2 \; \{Y = 10\}$
+        \end{itemize}
+    \end{example}
+\end{frame}
