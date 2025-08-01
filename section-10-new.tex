@@ -114,3 +114,94 @@
         \end{itemize}
     \end{block}
 \end{frame}
+
+\begin{frame}{A Forwards Assignment Axiom (Floyd)}
+    \begin{block}{Floyd's Original Formulation}
+        This is the original semantics of assignment due to Floyd:
+        \[ \vdash \{P\} \; V := E \; \{\exists v. \; V = E[v/V] \wedge P[v/V]\} \]
+        where $v$ is a new variable (i.e., doesn't equal $V$ or occur in $P$ or $E$)
+    \end{block}
+    
+    \begin{block}{What This Means}
+        \begin{itemize}
+            \item We start with precondition $P$
+            \item After assignment, $V$ has the value that $E$ had (with old $V$ replaced by $v$)
+            \item The old properties still hold (with old $V$ replaced by $v$)
+            \item We use existential quantification to ``remember'' the old value
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example of the Forwards Axiom}
+    \begin{example}[Forwards Assignment]
+        \[ \vdash \{X=1\} \; X := X+1 \; \{\exists v. \; X = X+1[v/X] \wedge X=1[v/X]\} \]
+    \end{example}
+    
+    \begin{block}{Simplifying the Postcondition}
+        \begin{align*}
+            & \vdash \{X=1\} \; X := X+1 \; \{\exists v. \; X = X+1[v/X] \wedge X=1[v/X]\} \\
+            & \vdash \{X=1\} \; X := X+1 \; \{\exists v. \; X = v + 1 \wedge v = 1\} \\
+            & \vdash \{X=1\} \; X := X+1 \; \{\exists v. \; X = 1 + 1 \wedge v = 1\} \\
+            & \vdash \{X=1\} \; X := X+1 \; \{X = 1 + 1 \wedge \exists v. \; v = 1\} \\
+            & \vdash \{X=1\} \; X := X+1 \; \{X = 2 \wedge \mathbf{T}\} \\
+            & \vdash \{X=1\} \; X := X+1 \; \{X = 2\}
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Comparing Forward and Backward Axioms}
+    \begin{block}{Key Observation}
+        The forwards axiom is equivalent to the standard (backwards) one but harder to use
+    \end{block}
+    
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Backwards (Hoare)}
+                \[ \vdash \{Q[E/V]\} \; V := E \; \{Q\} \]
+                \begin{itemize}
+                    \item Direct: substitute in precondition
+                    \item Natural for verification
+                    \item No existential quantifiers
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Forwards (Floyd)}
+                \[ \vdash \{P\} \; V := E \; \{\exists v. \; V = E[v/V] \wedge P[v/V]\} \]
+                \begin{itemize}
+                    \item Requires existential elimination
+                    \item More complex postconditions
+                    \item Natural for symbolic execution
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Why Have Two Forms?}
+    \begin{block}{Different Use Cases}
+        \begin{itemize}
+            \item \textbf{Backwards (Hoare)}: Better for \emph{verification}
+                \begin{itemize}
+                    \item Start with desired postcondition
+                    \item Work backwards to find required precondition
+                    \item Natural for proving programs meet specifications
+                \end{itemize}
+            \item \textbf{Forwards (Floyd)}: Better for \emph{analysis}
+                \begin{itemize}
+                    \item Start with known precondition
+                    \item Work forwards to compute postcondition
+                    \item Natural for symbolic execution and program analysis
+                \end{itemize}
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{In Practice}
+        Most verification systems use Hoare's backwards form because:
+        \begin{itemize}
+            \item Simpler to work with (no existential quantifiers)
+            \item More direct for common verification tasks
+            \item Easier to automate
+        \end{itemize}
+    \end{block}
+\end{frame}
