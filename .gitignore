@@ -1,2 +1,5 @@
-out
+# ignore everything under out, but not the out/ directory itself
+out/*
+
+# re-include the one PDF we care about
 !out/hoare-logic-slides.pdf

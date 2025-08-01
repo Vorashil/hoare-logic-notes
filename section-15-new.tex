@@ -182,49 +182,91 @@
     \end{example}
 \end{frame}
 
-\begin{frame}{Weakest Liberal Precondition}
-    \begin{block}{What is $Q[E/V]$?}
-        Recall from Section 9: $Q[E/V]$ means ``$Q$ with $E$ substituted for $V$''
+\begin{frame}{Why Do We Need Derived Rules?}
+    \begin{block}{The Problem with Forward Proof}
+        Using just the assignment axiom:
         \begin{itemize}
-            \item This is exactly the precondition needed for assignment
-            \item It's the \emph{weakest} condition that ensures $Q$ after $V:=E$
-            \item ``Liberal'' means we don't require termination
+            \item We must guess the right precondition
+            \item Often requires multiple attempts
+            \item May need complex logical manipulations
+            \item Hard to mechanize or automate
         \end{itemize}
     \end{block}
     
-    \begin{example}[Computing $wlp$]
+    \begin{block}{The Solution: Work Backwards}
+        Derived rules let us:
         \begin{itemize}
-            \item Goal: $\{?\} \; X:=X+1 \; \{X>0\}$
-            \item Compute: $(X>0)[X+1/X] = (X+1>0) = (X>-1)$
-            \item Therefore: $\vdash \{X>-1\} \; X:=X+1 \; \{X>0\}$
+            \item Start with what we want to prove (the goal)
+            \item Systematically compute what we need
+            \item No guessing required
+            \item Can be automated by computers
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{What is Weakest Liberal Precondition?}
+    \begin{block}{The Intuition}
+        Given: $\{?\} \; V:=E \; \{Q\}$
+        
+        We ask: ``What must be true before the assignment so that $Q$ is true after?''
+        
+        Answer: Whatever $Q$ says about $V$, must have been true about $E$ before!
+    \end{block}
+    
+    \begin{example}[Simple Example]
+        \begin{itemize}
+            \item Want: $\{?\} \; X:=X+1 \; \{X>0\}$
+            \item After: $X$ must be greater than 0
+            \item Before: $X+1$ must be greater than 0
+            \item So: $X > -1$ before the assignment
+            \item We compute: $(X>0)[X+1/X] = X+1>0 = X>-1$
         \end{itemize}
     \end{example}
+\end{frame}
+
+\begin{frame}{Computing WLP Step by Step}
+    \begin{block}{The Substitution Process}
+        $Q[E/V]$ means: Replace every occurrence of $V$ in $Q$ with $E$
+    \end{block}
     
-    \begin{alertblock}{Key Point}
-        The derived rule tells us exactly what precondition we need!
+    \begin{example}[More Examples]
+        \begin{tabular}{l|l|l}
+            \textbf{Postcondition $Q$} & \textbf{Assignment} & \textbf{WLP: $Q[E/V]$} \\
+            \hline
+            $Y = 5$ & $Y := X + 2$ & $(X + 2) = 5$, i.e., $X = 3$ \\
+            $X = Y$ & $X := Y + 1$ & $(Y + 1) = Y$, i.e., $\mathbf{F}$ \\
+            $X^2 > 0$ & $X := Y - 3$ & $(Y - 3)^2 > 0$, i.e., $Y \neq 3$ \\
+        \end{tabular}
+    \end{example}
+    
+    \begin{alertblock}{Key Insight}
+        The wlp is exactly what the assignment axiom gives us - but now we can compute it mechanically!
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{More Examples of Derived Assignment Rule}
+\begin{frame}{Array Assignment - Corrected}
     \begin{example}[Array Assignment]
         Goal: $\{?\} \; A[i]:=v \; \{A[j]=w\}$
         
-        Compute $wlp$: $(A[j]=w)[A[i]:=v/A[i]]$
-        
-        Result depends on whether $i=j$:
+        The substitution for arrays is tricky:
         \begin{itemize}
-            \item If we know $i \neq j$: precondition is $A[j]=w$
-            \item If we know $i = j$: precondition is $v=w$
-            \item In general: $(i=j \wedge v=w) \vee (i \neq j \wedge A[j]=w)$
+            \item $A[j]$ after assignment equals:
+            \begin{itemize}
+                \item $v$ if $i = j$ (we just assigned it!)
+                \item $A[j]$ if $i \neq j$ (unchanged)
+            \end{itemize}
+        \end{itemize}
+        
+        Therefore, the wlp is:
+        \begin{itemize}
+            \item If we can prove $i = j$: need $v = w$
+            \item If we can prove $i \neq j$: need $A[j] = w$
+            \item In general: $(i = j \Rightarrow v = w) \wedge (i \neq j \Rightarrow A[j] = w)$
         \end{itemize}
     \end{example}
     
-    \begin{block}{Connection to Earlier Material}
-        \begin{itemize}
-            \item This shows why aliasing matters (Section 10)
-            \item The derived rule handles all these cases systematically
-            \item No need to worry about special cases in the proof
-        \end{itemize}
+    \begin{block}{Why This Matters}
+        This connects to our discussion of aliasing (Section 10) - array indices might refer to the same location!
     \end{block}
 \end{frame}
 
