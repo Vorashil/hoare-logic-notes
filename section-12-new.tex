@@ -130,3 +130,92 @@
         The lowercase $x$ and $y$ are auxiliary variables that remember the initial values
     \end{alertblock}
 \end{frame}
+
+\begin{frame}{Conditionals}
+    \begin{block}{Syntax and Semantics}
+        \begin{itemize}
+            \item \textbf{Syntax}: \texttt{IF } $S$ \texttt{ THEN } $C_1$ \texttt{ ELSE } $C_2$
+            \item \textbf{Semantics}:
+            \begin{itemize}
+                \item If the statement $S$ is true in the current state, then $C_1$ is executed
+                \item If $S$ is false, then $C_2$ is executed
+            \end{itemize}
+            \item \textbf{Example}: \texttt{IF X<Y THEN MAX:=Y ELSE MAX:=X}
+            \begin{itemize}
+                \item The value of the variable MAX is set to the maximum of the values of X and Y
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Conditional Rule}
+    \begin{block}{The Conditional Rule}
+        \[ \frac{\vdash \{P \wedge S\} \; C_1 \; \{Q\}, \quad \vdash \{P \wedge \neg S\} \; C_2 \; \{Q\}}{\vdash \{P\} \; \texttt{IF } S \texttt{ THEN } C_1 \texttt{ ELSE } C_2 \; \{Q\}} \]
+    \end{block}
+    
+    \begin{block}{Understanding the Rule}
+        \begin{itemize}
+            \item We need to prove two things:
+            \begin{itemize}
+                \item When $S$ is true, $C_1$ transforms $P \wedge S$ to $Q$
+                \item When $S$ is false, $C_2$ transforms $P \wedge \neg S$ to $Q$
+            \end{itemize}
+            \item Both branches must establish the same postcondition $Q$
+            \item The precondition $P$ is strengthened by the branch condition
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Example: Finding the Maximum}
+    \begin{block}{Goal}
+        Prove: $\vdash \{\mathbf{T}\} \; \texttt{IF X$\geq$Y THEN MAX:=X ELSE MAX:=Y} \; \{MAX=\max(X,Y)\}$
+    \end{block}
+\end{frame}
+\begin{frame}{Example: Finding the Maximum}
+
+    \begin{block}{Step 1: Logical Facts}
+        From Assignment Axiom + Precondition Strengthening:
+        \begin{itemize}
+            \item $\vdash (X \geq Y \Rightarrow X = \max(X,Y)) \wedge (\neg(X \geq Y) \Rightarrow Y = \max(X,Y))$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Step 2: Prove Each Branch}
+        It follows that:
+        \begin{itemize}
+            \item $\vdash \{\mathbf{T} \wedge X \geq Y\} \; MAX:=X \; \{MAX=\max(X,Y)\}$
+            \item $\vdash \{\mathbf{T} \wedge \neg(X \geq Y)\} \; MAX:=Y \; \{MAX=\max(X,Y)\}$
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Step 3: Apply Conditional Rule}
+        Then by the conditional rule:
+        \[\vdash \{\mathbf{T}\} \; \texttt{IF X$\geq$Y THEN MAX:=X ELSE MAX:=Y} \; \{MAX=\max(X,Y)\}\]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Key Points about Conditionals}
+    \begin{block}{Important Observations}
+        \begin{itemize}
+            \item Both branches must end in the same postcondition
+            \item The branch condition provides extra information in each case
+            \item We can use this extra information to prove different things in each branch
+        \end{itemize}
+    \end{block}
+\end{frame}
+\begin{frame}{Key Points about Conditionals}
+
+    \begin{block}{Common Pattern}
+        When proving conditional statements:
+        \begin{enumerate}
+            \item Identify what you know in each branch ($P \wedge S$ vs $P \wedge \neg S$)
+            \item Use assignment axiom for each branch separately
+            \item Apply precondition strengthening if needed
+            \item Combine using the conditional rule
+        \end{enumerate}
+    \end{block}
+    
+    \begin{alertblock}{Note}
+        The conditional rule requires the same postcondition $Q$ for both branches. If branches naturally lead to different postconditions, you may need to weaken them to a common $Q$.
+    \end{alertblock}
+\end{frame}
