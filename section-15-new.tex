@@ -1,0 +1,249 @@
+% Section 15: Derived Rules
+\section{Derived Rules}
+
+\begin{frame}{Conjunction and Disjunction}
+    \begin{block}{Specification Conjunction and Disjunction}
+        \textbf{Specification conjunction}
+        \[ \frac{\vdash \{P_1\} \; C \; \{Q_1\}, \quad \vdash \{P_2\} \; C \; \{Q_2\}}{\vdash \{P_1 \wedge P_2\} \; C \; \{Q_1 \wedge Q_2\}} \]
+        
+        \textbf{Specification disjunction}
+        \[ \frac{\vdash \{P_1\} \; C \; \{Q_1\}, \quad \vdash \{P_2\} \; C \; \{Q_2\}}{\vdash \{P_1 \vee P_2\} \; C \; \{Q_1 \vee Q_2\}} \]
+    \end{block}
+    
+    \begin{block}{Use of These Rules}
+        These rules are useful for splitting a proof into independent bits:
+        \begin{itemize}
+            \item They enable $\vdash \{P\} \; C \; \{Q_1 \wedge Q_2\}$ to be proved by proving separately that both $\vdash \{P\} \; C \; \{Q_1\}$ and also that $\vdash \{P\} \; C \; \{Q_2\}$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Theoretical vs Practical Considerations}
+    \begin{block}{Theoretical Status}
+        Any proof with these rules could be done without using them:
+        \begin{itemize}
+            \item i.e., they are theoretically redundant (proof omitted)
+            \item However, useful in practice
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Why These Rules Matter in Practice}
+        \begin{itemize}
+            \item They make proofs more modular
+            \item Allow separate verification of different properties
+            \item Can simplify complex specifications
+            \item Make proof structure clearer
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Derived Rules for Finding Proofs}
+    \begin{block}{The Goal-Directed Approach}
+        Suppose the goal is to prove $\{Precondition\} \; Command \; \{Postcondition\}$
+        
+        If there were a rule of the form:
+        \[ \frac{\vdash H_1, \ldots, \vdash H_n}{\vdash \{P\} \; C \; \{Q\}} \]
+        
+        then we could instantiate:
+        \begin{itemize}
+            \item $P \mapsto Precondition$, $C \mapsto Command$, $Q \mapsto Postcondition$
+            \item to get instances of $H_1, \ldots, H_n$ as subgoals
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Key Insight}
+        \begin{itemize}
+            \item Some rules are already in this form (e.g., the sequencing rule)
+            \item We will derive rules of this form for all commands
+            \item Then we use these derived rules for mechanizing Hoare Logic proofs
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Understanding Goal-Directed Proof}
+    \begin{block}{What is Goal-Directed Proof?}
+        Instead of building proofs from axioms up (forward), we:
+        \begin{enumerate}
+            \item Start with what we want to prove (the goal)
+            \item Find a rule whose conclusion matches our goal
+            \item The premises of that rule become our new subgoals
+            \item Repeat until we reach axioms or known facts
+        \end{enumerate}
+    \end{block}
+    
+    \begin{example}[Sequencing Example]
+        To prove $\{P\} \; C_1; C_2 \; \{Q\}$:
+        \begin{itemize}
+            \item Apply sequencing rule backwards
+            \item New subgoals: find $R$ such that:
+                \begin{itemize}
+                    \item $\vdash \{P\} \; C_1 \; \{R\}$
+                    \item $\vdash \{R\} \; C_2 \; \{Q\}$
+                \end{itemize}
+        \end{itemize}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Derived Rules}
+    \begin{block}{Establishing Derived Rules for All Commands}
+        We will establish derived rules for all commands:
+
+        \begin{center}
+        \begin{tabular}{c}
+            $\cdots$ \\
+            \hline
+            $\vdash \{P\} \; V:=E \; \{Q\}$ \\
+            \\
+            $\cdots$ \\
+            \hline
+            $\vdash \{P\} \; C_1;C_2 \; \{Q\}$ \\
+            \\
+            $\cdots$ \\
+            \hline
+            $\vdash \{P\} \; \texttt{IF } S \texttt{ THEN } C_1 \texttt{ ELSE } C_2 \; \{Q\}$ \\
+            \\
+            $\cdots$ \\
+            \hline
+            $\vdash \{P\} \; \texttt{WHILE } S \texttt{ DO } C \; \{Q\}$
+        \end{tabular}
+        \end{center}
+    \end{block}
+\end{frame}
+\begin{frame}{Derived Rules}
+
+    \begin{block}{Purpose}
+        These support `backwards proof' starting from a goal $\{P\} \; C \; \{Q\}$
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Derived Assignment Rule}
+    \begin{block}{An Example Proof}
+        Let's revisit our earlier proof from Section 12:
+        \begin{enumerate}
+            \item $\vdash \{R=X \wedge 0=0\} \; Q:=0 \; \{R=X \wedge Q=0\}$ \hfill By assignment axiom
+            \item $\vdash R=X \Rightarrow R=X \wedge 0=0$ \hfill By pure logic
+            \item $\vdash \{R=X\} \; Q:=0 \; \{R=X \wedge Q=0\}$ \hfill By precondition strengthening
+        \end{enumerate}
+    \end{block}
+    
+    \begin{block}{Generalizing to a Proof Schema}
+        We can generalize this pattern:
+        \begin{enumerate}
+            \item $\vdash \{Q[E/V]\} \; V:=E \; \{Q\}$ \hfill By assignment axiom
+            \item $\vdash P \Rightarrow Q[E/V]$ \hfill \colorbox{yellow}{By assumption}
+            \item $\vdash \{P\} \; V:=E \; \{Q\}$ \hfill By precondition strengthening
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{The Derived Assignment Rule}
+    \begin{block}{The Rule}
+        This proof schema justifies:
+        
+        \begin{center}
+        \fbox{
+        \begin{minipage}{0.8\textwidth}
+        \centering
+        \textbf{Derived Assignment Rule}
+        
+        \vspace{0.5em}
+        
+        \[ \frac{\vdash P \Rightarrow Q[E/V]}{\vdash \{P\} \; V:=E \; \{Q\}} \]
+        \end{minipage}
+        }
+        \end{center}
+    \end{block}
+    
+    \begin{block}{Key Insight}
+        \begin{itemize}
+            \item $Q[E/V]$ is the \textbf{weakest liberal precondition} $wlp(V:=E, Q)$
+            \item This is the weakest condition that guarantees $Q$ after $V:=E$
+            \item Links back to our discussion of substitution in Section 9
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Understanding the Derived Assignment Rule}
+    \begin{block}{Why This Rule is Powerful}
+        \begin{itemize}
+            \item \textbf{Goal-directed}: Start with desired postcondition $Q$
+            \item \textbf{Systematic}: Compute $Q[E/V]$ mechanically
+            \item \textbf{Complete}: Can derive any valid assignment triple
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Using the Rule]
+        Original proof required 3 steps:
+        \begin{enumerate}
+            \item $\vdash R=X \Rightarrow R=X \wedge 0=0$ \hfill By pure logic
+            \item $\vdash \{R=X\} \; Q:=0 \; \{R=X \wedge Q=0\}$ \hfill By derived assignment
+        \end{enumerate}
+        Now only 2 steps! We saved one step by using the derived rule.
+    \end{example}
+\end{frame}
+
+\begin{frame}{Weakest Liberal Precondition}
+    \begin{block}{What is $Q[E/V]$?}
+        Recall from Section 9: $Q[E/V]$ means ``$Q$ with $E$ substituted for $V$''
+        \begin{itemize}
+            \item This is exactly the precondition needed for assignment
+            \item It's the \emph{weakest} condition that ensures $Q$ after $V:=E$
+            \item ``Liberal'' means we don't require termination
+        \end{itemize}
+    \end{block}
+    
+    \begin{example}[Computing $wlp$]
+        \begin{itemize}
+            \item Goal: $\{?\} \; X:=X+1 \; \{X>0\}$
+            \item Compute: $(X>0)[X+1/X] = (X+1>0) = (X>-1)$
+            \item Therefore: $\vdash \{X>-1\} \; X:=X+1 \; \{X>0\}$
+        \end{itemize}
+    \end{example}
+    
+    \begin{alertblock}{Key Point}
+        The derived rule tells us exactly what precondition we need!
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{More Examples of Derived Assignment Rule}
+    \begin{example}[Array Assignment]
+        Goal: $\{?\} \; A[i]:=v \; \{A[j]=w\}$
+        
+        Compute $wlp$: $(A[j]=w)[A[i]:=v/A[i]]$
+        
+        Result depends on whether $i=j$:
+        \begin{itemize}
+            \item If we know $i \neq j$: precondition is $A[j]=w$
+            \item If we know $i = j$: precondition is $v=w$
+            \item In general: $(i=j \wedge v=w) \vee (i \neq j \wedge A[j]=w)$
+        \end{itemize}
+    \end{example}
+    
+    \begin{block}{Connection to Earlier Material}
+        \begin{itemize}
+            \item This shows why aliasing matters (Section 10)
+            \item The derived rule handles all these cases systematically
+            \item No need to worry about special cases in the proof
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Why Backwards Proof?}
+    \begin{block}{Advantages of Working Backwards}
+        \begin{itemize}
+            \item \textbf{Goal-focused}: Always know what you're trying to prove
+            \item \textbf{Systematic}: Each command type has a specific strategy
+            \item \textbf{Mechanizable}: Can be automated more easily
+            \item \textbf{Natural}: Matches how humans often think about proofs
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{The Process}
+        \begin{enumerate}
+            \item Look at the command structure
+            \item Apply the corresponding derived rule
+            \item Generate simpler subgoals
+            \item Continue until reaching assignment axioms
+        \end{enumerate}
+    \end{block}
+\end{frame}

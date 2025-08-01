@@ -72,7 +72,7 @@
         \{Y=N!\}
         \end{align*}
     \end{block}
-    
+
     \begin{block}{Look at the Facts}
         \begin{itemize}
             \item Initially $X=0$ and $Y=1$
@@ -80,18 +80,20 @@
             \item On each iteration both $X$ and $Y$ increase: $X$ by 1 and $Y$ by $X$
         \end{itemize}
     \end{block}
-    
+
     \begin{block}{First Attempt}
         \begin{itemize}
             \item An invariant is $Y = X!$
             \item At end need $Y = N!$, but WHILE-rule only gives $\neg(X<N)$
         \end{itemize}
     \end{block}
-    
+
+\end{frame}
+\begin{frame}{Related Example}
     \begin{alertblock}{Ah Ha!}
         Invariant needed: $Y = X! \wedge X \leq N$
     \end{alertblock}
-    
+
     \begin{block}{Why This Works}
         \begin{itemize}
             \item At end: $X \leq N \wedge \neg(X<N) \Rightarrow X=N$
